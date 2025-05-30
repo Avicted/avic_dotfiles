@@ -1,0 +1,60 @@
+<?xml version="1.1" encoding="UTF-8"?>
+
+<channel name="xfce4-desktop" version="1.0">
+  <property name="backdrop" type="empty">
+    <property name="screen0" type="empty">
+      <property name="monitorDisplayPort-0" type="empty">
+        <property name="workspace0" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/home/avic/Pictures/galaxy.jpg"/>
+        </property>
+        <property name="workspace1" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/usr/share/backgrounds/xfce/illyria-default.jpg"/>
+        </property>
+      </property>
+      <property name="monitorDisplayPort-2" type="empty">
+        <property name="workspace0" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/home/avic/Pictures/galaxy.jpg"/>
+        </property>
+        <property name="workspace1" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/usr/share/backgrounds/xfce/xfce-shapes.svg"/>
+        </property>
+      </property>
+      <property name="monitorHDMI-A-0" type="empty">
+        <property name="workspace0" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/home/avic/Pictures/galaxy.jpg"/>
+        </property>
+        <property name="workspace1" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/usr/share/backgrounds/xfce/xfce-shapes.svg"/>
+        </property>
+      </property>
+    </property>
+  </property>
+  <property name="desktop-icons" type="empty">
+    <property name="style" type="int" value="2"/>
+    <property name="file-icons" type="empty">
+      <property name="show-removable" type="bool" value="false"/>
+      <property name="migrated-4.19" type="array">
+        <value type="string" value="48ed508bcc298ef5291bda100de85b8852a6f33e"/>
+      </property>
+    </property>
+    <property name="icon-size" type="uint" value="42"/>
+    <property name="tooltip-size" type="double" value="96"/>
+  </property>
+  <property name="last" type="empty">
+    <property name="window-width" type="int" value="634"/>
+    <property name="window-height" type="int" value="566"/>
+  </property>
+  <property name="last-settings-migration-version" type="uint" value="1"/>
+</channel>
