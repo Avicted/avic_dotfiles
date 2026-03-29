@@ -1,12 +1,15 @@
 {
+  "offloadAdmControls": true,
+  "BACKGROUND_COLOR": "#000000",
   "chromiumSwitches": {},
   "IS_MAXIMIZED": false,
-  "IS_MINIMIZED": false,
+  "IS_MINIMIZED": true,
   "WINDOW_BOUNDS": {
-    "x": 2,
-    "y": 449,
-    "width": 1076,
-    "height": 1469
+    "x": 0,
+    "y": 468,
+    "width": 1080,
+    "height": 1452
   },
-  "BACKGROUND_COLOR": "#000000"
+  "enableLibOpenH264Electron": false,
+  "openH264Enabled": true
 }
