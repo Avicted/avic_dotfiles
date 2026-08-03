@@ -1,7 +1,14 @@
 # Avic's git configuration — https://github.com/Avicted/avic_dotfiles
 #
-# Identity, signing key and machine-specific paths are NOT in this file.
-# They live in ~/.gitconfig.local, which is untracked. See README.md.
+# This file is NOT symlinked to ~/.gitconfig. Instead, ~/.gitconfig is a small
+# untracked file that pulls this one in:
+#
+#     [include]
+#         path = ~/projects/avic_dotfiles/.gitconfig
+#
+# That keeps identity, signing key and machine-specific paths out of this
+# public repo, and means `git config --global ...` writes to the untracked
+# file rather than in here. See README.md.
 
 [init]
 	defaultBranch = main
@@ -83,9 +90,3 @@
 	br = branch
 	amend = commit --amend --no-edit
 	undo = reset --soft HEAD~1
-
-# Machine-specific overrides: identity, signing key, safe.directory.
-# A missing file is silently ignored by git, so this config is safe to
-# deploy to a fresh machine as-is.
-[include]
-	path = ~/.gitconfig.local

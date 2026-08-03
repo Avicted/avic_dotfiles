@@ -82,31 +82,36 @@ git add -A && git commit -m "add kitty config"
 
 ## Git configuration
 
-This repo is public, so `.gitconfig` contains **no identity and no machine-specific
-paths**. Those live in `~/.gitconfig.local`, which is never tracked. The last lines of
-`.gitconfig` pull it in:
+This repo is public, so the tracked `.gitconfig` contains **no identity and no
+machine-specific paths**.
+
+Unlike everything else here, `.gitconfig` is **not** stowed into `$HOME` (it's listed in
+`.stow-local-ignore`). Instead `~/.gitconfig` stays a real, untracked file that pulls the
+shared config in:
 
 ```ini
 [include]
-    path = ~/.gitconfig.local
+    path = ~/projects/avic_dotfiles/.gitconfig
 ```
 
-A missing `~/.gitconfig.local` is silently ignored by git, so the tracked config is safe
-to deploy anywhere as-is.
+The reason is that git resolves symlinks before writing config. If `~/.gitconfig` were a
+symlink into this repo, then a stray `git config --global user.email ...` would edit the
+**tracked, public** file. With the include, `--global` writes land in the untracked file
+where they belong. To edit the shared config on purpose:
 
-> **Careful:** `~/.gitconfig` is a symlink into this repo, and git resolves symlinks
-> before writing. That means `git config --global user.email ...` edits the **tracked,
-> public** file. Write anything private to the local file explicitly instead:
->
-> ```bash
-> git config --file ~/.gitconfig.local user.email you@example.com
-> ```
+```bash
+git config --file ~/projects/avic_dotfiles/.gitconfig <key> <value>
+```
 
 ### Per-machine setup
 
-1. Create `~/.gitconfig.local`:
+1. Create `~/.gitconfig`. Settings after the `[include]` override the shared config, so
+   local tweaks go at the bottom:
 
 ```ini
+[include]
+    path = ~/projects/avic_dotfiles/.gitconfig
+
 [user]
     name = Your Name
     email = you@example.com
@@ -138,7 +143,7 @@ git log --show-signature -1   # -> Good "git" signature for you@example.com
 ```
 
 If you'd rather not sign at all, set `commit.gpgsign = false` and `tag.gpgsign = false`
-in `~/.gitconfig.local`.
+in `~/.gitconfig`, below the `[include]`.
 
 ## Setting up on a new machine
 
@@ -149,4 +154,5 @@ cd ~/projects/avic_dotfiles
 stow -v -t ~ .
 ```
 
-Then follow [Git configuration](#git-configuration) to create `~/.gitconfig.local`.
+Then follow [Git configuration](#git-configuration) to create `~/.gitconfig` — stow
+deliberately skips that one.

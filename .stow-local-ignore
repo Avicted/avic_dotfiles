@@ -4,3 +4,9 @@
 ^/\.git$
 ^/\.gitignore$
 ^/\.stow-local-ignore$
+
+# .gitconfig is deliberately NOT symlinked into $HOME. ~/.gitconfig is a real
+# untracked file that [include]s it — see the README. Symlinking it here would
+# both conflict with that file and let `git config --global` write into this
+# public repo.
+^/\.gitconfig$
