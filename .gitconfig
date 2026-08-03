@@ -1,0 +1,91 @@
+# Avic's git configuration — https://github.com/Avicted/avic_dotfiles
+#
+# Identity, signing key and machine-specific paths are NOT in this file.
+# They live in ~/.gitconfig.local, which is untracked. See README.md.
+
+[init]
+	defaultBranch = main
+
+[core]
+	editor = nvim
+	autocrlf = input
+
+[column]
+	# multi-column branch/tag listings
+	ui = auto
+
+[branch]
+	# `git branch` lists most-recent first
+	sort = -committerdate
+
+[tag]
+	# v1.10 sorts after v1.9, not before
+	sort = version:refname
+	gpgsign = true
+
+[pull]
+	rebase = true
+
+[push]
+	default = simple
+	# `git push` on a new branch just works
+	autoSetupRemote = true
+	followTags = true
+
+[fetch]
+	prune = true
+	pruneTags = true
+
+[rebase]
+	autoStash = true
+	autoSquash = true
+	# rebasing a stack updates the intermediate branches too
+	updateRefs = true
+
+[merge]
+	conflictStyle = zdiff3
+
+[diff]
+	algorithm = histogram
+	# moved lines coloured differently from added/removed
+	colorMoved = plain
+	# i/ w/ c/ prefixes instead of a/ b/
+	mnemonicPrefix = true
+	renames = true
+
+[rerere]
+	# remember how conflicts were resolved, replay them next time
+	enabled = true
+	autoupdate = true
+
+[help]
+	autocorrect = prompt
+
+[color]
+	ui = auto
+
+[commit]
+	# show the diff in the commit message editor
+	verbose = true
+	gpgsign = true
+
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
+
+[alias]
+	lol = log --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit
+	lola = log --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit --all
+	st = status -sb
+	co = checkout
+	br = branch
+	amend = commit --amend --no-edit
+	undo = reset --soft HEAD~1
+
+# Machine-specific overrides: identity, signing key, safe.directory.
+# A missing file is silently ignored by git, so this config is safe to
+# deploy to a fresh machine as-is.
+[include]
+	path = ~/.gitconfig.local

@@ -7,9 +7,11 @@ Dotfiles for my system, managed with [GNU Stow](https://www.gnu.org/software/sto
 ```
 avic_dotfiles/
 ├── .config/
+│   └── git/        # Global gitignore
 │   └── nvim/       # Neovim config
 │   └── rofi/       # Rofi config
 │   └── ...         # Other app configs
+├── .gitconfig      # Git config (see "Git configuration" below)
 ├── .zshrc          # Zsh config
 └── README.md
 ```
@@ -78,6 +80,66 @@ stow -v -t ~ .
 git add -A && git commit -m "add kitty config"
 ```
 
+## Git configuration
+
+This repo is public, so `.gitconfig` contains **no identity and no machine-specific
+paths**. Those live in `~/.gitconfig.local`, which is never tracked. The last lines of
+`.gitconfig` pull it in:
+
+```ini
+[include]
+    path = ~/.gitconfig.local
+```
+
+A missing `~/.gitconfig.local` is silently ignored by git, so the tracked config is safe
+to deploy anywhere as-is.
+
+> **Careful:** `~/.gitconfig` is a symlink into this repo, and git resolves symlinks
+> before writing. That means `git config --global user.email ...` edits the **tracked,
+> public** file. Write anything private to the local file explicitly instead:
+>
+> ```bash
+> git config --file ~/.gitconfig.local user.email you@example.com
+> ```
+
+### Per-machine setup
+
+1. Create `~/.gitconfig.local`:
+
+```ini
+[user]
+    name = Your Name
+    email = you@example.com
+    signingkey = ~/.ssh/id_ed25519.pub
+
+# Repos owned by another uid, work paths, etc.
+# [safe]
+#     directory = /path/to/some/repo
+```
+
+2. Commits are signed by default with SSH. Register the signer so local verification
+   works:
+
+```bash
+printf '%s %s\n' "you@example.com" "$(cut -d' ' -f1,2 ~/.ssh/id_ed25519.pub)" \
+  > ~/.ssh/allowed_signers
+chmod 644 ~/.ssh/allowed_signers
+```
+
+3. For GitHub to show commits as **Verified**, add the *same* public key a second time at
+   **Settings → SSH and GPG keys → New SSH key**, with **Key type: Signing Key**. A key
+   added only as an Authentication Key will not verify commits.
+
+To check it works:
+
+```bash
+git commit --allow-empty -m "signing test"
+git log --show-signature -1   # -> Good "git" signature for you@example.com
+```
+
+If you'd rather not sign at all, set `commit.gpgsign = false` and `tag.gpgsign = false`
+in `~/.gitconfig.local`.
+
 ## Setting up on a new machine
 
 ```bash
@@ -86,3 +148,5 @@ git clone git@github.com:Avicted/avic_dotfiles.git ~/projects/avic_dotfiles
 cd ~/projects/avic_dotfiles
 stow -v -t ~ .
 ```
+
+Then follow [Git configuration](#git-configuration) to create `~/.gitconfig.local`.

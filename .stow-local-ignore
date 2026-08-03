@@ -1,0 +1,6 @@
+# Repo housekeeping files — these describe the repo itself and must not be
+# symlinked into $HOME by `stow -t ~ .`
+^/README\.md$
+^/\.git$
+^/\.gitignore$
+^/\.stow-local-ignore$
