@@ -14,6 +14,8 @@ unsetopt correct
 unsetopt correct_all
 
 # typo fixes
+unalias gf
+
 alias ll="ls -lah"
 alias lt="ls -halt"
 alias CLEAR="clear"
@@ -22,8 +24,8 @@ alias C="clear"
 alias sl="ls"
 alias docker_remove_all='docker rm -f $(docker ps -aq)'
 alias MAKE="make"
+alias gs="git status"
 
-unalias gf
 
 # dotnet core schenanigans
 export DOTNET_ROOT=$HOME/.dotnet
@@ -32,7 +34,8 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 export PATH="$PATH:/opt/rocm/bin"
-
 export PATH="$PATH:/opt/cuda/bin"
-
 export PATH="$PATH:/home/avic/projects/external/aseprite/build/bin"
+export PATH="$HOME/opt/cross/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
