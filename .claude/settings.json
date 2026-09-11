@@ -1,0 +1,57 @@
+{
+  "cleanupPeriodDays": 99999,
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "CLAUDE_CODE_ATTRIBUTION_HEADER": "0"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(make)",
+      "Bash(python3 -c ' *)"
+    ],
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git merge*)",
+      "Bash(git rebase*)",
+      "Bash(git reset*)",
+      "Bash(git branch -d*)",
+      "Bash(rm -*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": []
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "sh /home/avic/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "clangd-lsp@claude-plugins-official": true,
+    "token-optimizer@alexgreensh-token-optimizer": true,
+    "mattpocock-skills@mattpocock": false
+  },
+  "extraKnownMarketplaces": {
+    "alexgreensh-token-optimizer": {
+      "source": {
+        "source": "github",
+        "repo": "alexgreensh/token-optimizer"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      }
+    }
+  },
+  "effortLevel": "medium",
+  "tui": "fullscreen",
+  "theme": "dark",
+  "switchModelsOnFlag": false,
+  "model": "haiku"
+}
