@@ -33,7 +33,7 @@
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
-    "token-optimizer@alexgreensh-token-optimizer": true,
+    "token-optimizer@alexgreensh-token-optimizer": false,
     "mattpocock-skills@mattpocock": false
   },
   "extraKnownMarketplaces": {
