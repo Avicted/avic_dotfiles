@@ -57,7 +57,6 @@
 	colorMoved = plain
 	# i/ w/ c/ prefixes instead of a/ b/
 	mnemonicPrefix = true
-	renames = true
 
 [rerere]
 	# remember how conflicts were resolved, replay them next time
@@ -66,9 +65,6 @@
 
 [help]
 	autocorrect = prompt
-
-[color]
-	ui = auto
 
 [commit]
 	# show the diff in the commit message editor
