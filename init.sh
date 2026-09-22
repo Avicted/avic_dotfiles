@@ -114,4 +114,4 @@ setup_gitconfig
 
 echo
 log "done. To make edits stick: edit the live file, then"
-log "  cd $REPO_DIR && git add -A && git commit && git push"
+log "  cd $REPO_DIR && git add -p && git commit && git push"

@@ -51,13 +51,10 @@ and push:
 
 ```bash
 cd ~/projects/avic_dotfiles
-git add -A
+git add -p
 git commit -m "update configs"
 git push
 ```
-
-`git add -A` is safe here: `.gitignore` keeps app state and artifacts out, so only
-real config can be committed.
 
 ## Adding a new config
 
@@ -79,7 +76,7 @@ real config can be committed.
 3. Commit:
 
    ```bash
-   git add -A && git commit -m "add kitty config"
+   git add -p && git commit -m "add kitty config"
    ```
 
 If the app writes runtime data into its config dir (like Claude or Discord do),
