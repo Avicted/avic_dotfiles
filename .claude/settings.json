@@ -21,14 +21,15 @@
       "Bash(git reset*)",
       "Bash(git branch -d*)",
       "Bash(rm -*)"
-    ]
+    ],
+    "blockReadsOutsideWorkingDirectories": true
   },
   "hooks": {
     "PreToolUse": []
   },
   "statusLine": {
     "type": "command",
-    "command": "sh /home/avic/.claude/statusline-command.sh"
+    "command": "sh \"$HOME/.claude/statusline-command.sh\""
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
@@ -52,6 +53,5 @@
   "effortLevel": "medium",
   "tui": "fullscreen",
   "theme": "dark",
-  "switchModelsOnFlag": false,
-  "model": "haiku"
+  "switchModelsOnFlag": false
 }
