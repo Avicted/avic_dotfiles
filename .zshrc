@@ -13,6 +13,9 @@ source /usr/share/cachyos-zsh-config/cachyos-config.zsh
 unsetopt correct
 unsetopt correct_all
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 # typo fixes
 unalias gf
 
