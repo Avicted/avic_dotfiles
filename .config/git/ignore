@@ -1,4 +1,4 @@
-# Global gitignore — personal tooling artefacts that should never end up in
+# Global gitignore - personal tooling artefacts that should never end up in
 # any individual project's .gitignore. Git reads this path by default.
 
 # Agent / editor local state

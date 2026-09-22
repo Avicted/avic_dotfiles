@@ -9,7 +9,7 @@
 # After init.sh, ~/.claude is a real dir and only settings.json +
 # statusline-command.sh are symlinked into the repo. This guard means that even
 # if the whole dir were ever symlinked again (or someone runs `git add -A`),
-# only those two files could be committed — never history, plugins or the
+# only those two files could be committed - never history, plugins or the
 # .credentials.json auth secret.
 .claude/*
 !.claude/settings.json

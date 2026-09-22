@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# init.sh — link this dotfiles repo into $HOME. Replaces GNU Stow.
+# init.sh - link this dotfiles repo into $HOME. Replaces GNU Stow.
 #
 # The repo mirrors the home-directory layout. This script creates symlinks from
 # $HOME into the repo so that editing a live config (e.g. ~/.config/nvim/init.lua)
-# edits the repo file directly — then you just `git add && git commit && git push`.
+# edits the repo file directly - then you just `git add && git commit && git push`.
 #
 #   * Authored config dirs/files are symlinked whole (apps don't write junk there).
 #   * ~/.claude is special-cased: it's made a REAL dir and only the two tracked
 #     config files are symlinked in, so Claude's history/plugins/.credentials.json
 #     stay local and can never land in this public repo.
-#   * ~/.gitconfig is NOT symlinked — it's a real file that [include]s the shared
+#   * ~/.gitconfig is NOT symlinked - it's a real file that [include]s the shared
 #     config, so `git config --global` writes locally, never into the public repo.
-#   * .config/discord is app state, not config — it is deliberately not linked.
+#   * .config/discord is app state, not config - it is deliberately not linked.
 #
 # Idempotent: safe to re-run. Any existing live file/dir is backed up (with a
 # .bak.<timestamp> suffix) before being replaced by a symlink.
@@ -38,10 +38,10 @@ link_item() {
       log "ok      $live (already linked)"
       return
     fi
-    warn "$live is a symlink to '$cur', not '$target' — backing up and relinking"
+    warn "$live is a symlink to '$cur', not '$target' - backing up and relinking"
     mv "$live" "$live$BAK_SUFFIX"
   elif [ -e "$live" ]; then
-    warn "existing $live — backing up to $live$BAK_SUFFIX"
+    warn "existing $live - backing up to $live$BAK_SUFFIX"
     mv "$live" "$live$BAK_SUFFIX"
   fi
 
@@ -59,7 +59,7 @@ link_authored() {
 setup_claude() {
   local live_dir="$HOME_DIR/.claude"
   if [ -L "$live_dir" ]; then
-    warn "$live_dir is a symlink — replacing it with a real dir"
+    warn "$live_dir is a symlink - replacing it with a real dir"
     rm "$live_dir"
   fi
   mkdir -p "$live_dir"
@@ -80,7 +80,7 @@ setup_gitconfig() {
   fi
 
   if [ -e "$live" ]; then
-    warn "existing ~/.gitconfig — adding [include] at the top (backing up first)"
+    warn "existing ~/.gitconfig - adding [include] at the top (backing up first)"
     local tmp
     tmp="$(mktemp)"
     printf '[include]\n\t%s\n' "$include_line" > "$tmp"

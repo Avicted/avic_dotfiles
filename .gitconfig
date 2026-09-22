@@ -11,7 +11,7 @@
 # file rather than in here. See README.md.
 
 [init]
-	defaultBranch = main
+	defaultBranch = master
 
 [core]
 	editor = nvim

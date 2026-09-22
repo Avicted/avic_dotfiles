@@ -4,13 +4,13 @@ Dotfiles for my system. The repo mirrors the home-directory layout; `init.sh`
 creates symlinks from `~` into the repo so that editing a live config (e.g.
 `~/.config/nvim/init.lua`) edits the repo file directly.
 
-This is a **public** repo, so it only contains config I'm happy to publish — no
+This is a **public** repo, so it only contains config I'm happy to publish - no
 app state, no secrets, no machine-local identity.
 
 ## How it works
 
 `init.sh` (run from the repo) symlinks each config into `~`. It is **not** GNU
-Stow — it's a small script so the special cases below are explicit:
+Stow - it's a small script so the special cases below are explicit:
 
 - **Authored config** (`.zshrc`, `.config/{nvim,rofi,conky,alacritty,gamemode,
   MangoHud,git,automation}`) is symlinked whole. Apps don't write runtime junk
@@ -18,10 +18,10 @@ Stow — it's a small script so the special cases below are explicit:
 - **`~/.claude`** is made a *real* dir, and only `settings.json` +
   `statusline-command.sh` are symlinked into it. Claude Code's history, plugins
   and `.credentials.json` stay local and can never land in this repo.
-- **`~/.gitconfig`** is *not* symlinked — it's a real file that `[include]`s the
+- **`~/.gitconfig`** is *not* symlinked - it's a real file that `[include]`s the
   shared config, so `git config --global` writes locally, never into the repo.
   See [Git configuration](#git-configuration).
-- **`.config/discord`** is app state, not config — it's deliberately not linked
+- **`.config/discord`** is app state, not config - it's deliberately not linked
   and not tracked.
 
 `init.sh` is idempotent and safe to re-run: any pre-existing live file/dir is
@@ -83,7 +83,7 @@ real config can be committed.
    ```
 
 If the app writes runtime data into its config dir (like Claude or Discord do),
-don't just add it to the list — special-case it in `init.sh` the way `~/.claude`
+don't just add it to the list - special-case it in `init.sh` the way `~/.claude`
 is (real dir + symlink only the files you actually want to publish).
 
 ## Git configuration
