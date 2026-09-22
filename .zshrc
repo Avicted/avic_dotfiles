@@ -38,4 +38,16 @@ export PATH="$PATH:/opt/cuda/bin"
 export PATH="$PATH:/home/avic/projects/external/aseprite/build/bin"
 export PATH="$HOME/opt/cross/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.bun/bin:$PATH"
+
+lsgit() {
+  for d in */; do
+    if [ -d "$d/.git" ]; then
+      echo "$(git -C "$d" log -1 --format="%ct") $d"
+    fi
+  done | sort -rn | while read -r ts d; do
+    commit_info=$(git -C "$d" log -1 --format="%cd (%cr)")
+    printf "%-30s Last commit: %s\n" "$d" "$commit_info"
+  done
+}
 
