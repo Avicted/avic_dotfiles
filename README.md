@@ -10,20 +10,20 @@ secrets, no machine-local identity.
 pacman -S git
 git clone git@github.com:Avicted/avic_dotfiles.git ~/projects/avic_dotfiles
 cd ~/projects/avic_dotfiles
-./init.sh
+./init.sh              # symlink the configs into ~
+./init.sh --packages   # same, but first pacman-install the dev tools in packages.txt
 ```
 
-`init.sh` is idempotent; any pre-existing live file/dir is backed up to
-`*.bak.<timestamp>` before being replaced. See its comments for the special
-cases (`~/.claude`, `~/.gitconfig`, `.config/discord`, KDE).
+Packages are off by default. The list assumes the CachyOS repos (for
+`claude-code`) and has no AUR packages.
 
-Installing packages is off by default. `./init.sh --packages` (or
-`make install-packages`) first installs the dev toolchain listed in
-`packages.txt` with `pacman -S --needed`. It assumes the CachyOS repos (for
-`claude-code`); AUR packages are not included.
+Yes, this is reinventing Ansible, one pacman -S at a time.
 
-If it warns about a locale that isn't generated, run the `sudo` command it
-prints - otherwise apps launched from Plasma (e.g. rofi) fail to start.
+`init.sh` is idempotent: an existing file in `~` is backed up to
+`*.bak.<timestamp>` before it's replaced by a symlink. Its header comment covers
+the special cases (`~/.claude`, `~/.gitconfig`, `.config/discord`, KDE). If it
+warns about a missing locale, run the `sudo` command it prints, or apps
+launched from Plasma (like rofi) won't start.
 
 ## Usage
 
