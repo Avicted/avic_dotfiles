@@ -1,0 +1,50 @@
+# Dev packages installed by `./init.sh --packages` (off by default).
+# One pacman package per line; repo packages only (no AUR).
+
+# Build toolchain
+base-devel
+git
+openssh
+cmake
+meson
+ninja
+cmocka
+valgrind
+cloc
+
+# Languages / runtimes, plus LSPs used by .config/nvim where packaged
+go
+gopls
+rust
+python
+nodejs
+npm
+bun
+
+# Cross-compiling
+mingw-w64-gcc
+mingw-w64-tools
+
+# Vulkan dev
+vulkan-headers
+vulkan-validation-layers
+vulkan-utility-libraries
+spirv-headers
+volk
+
+# Editors / terminal tools
+neovim
+vim
+tmux
+ripgrep
+wget
+rsync
+unzip
+
+# Containers (the Makefile's quality gate needs docker)
+docker
+docker-compose
+
+# AI coding (claude-code is in the CachyOS repo)
+claude-code
+opencode

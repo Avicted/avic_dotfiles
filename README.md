@@ -17,6 +17,11 @@ cd ~/projects/avic_dotfiles
 `*.bak.<timestamp>` before being replaced. See its comments for the special
 cases (`~/.claude`, `~/.gitconfig`, `.config/discord`, KDE).
 
+Installing packages is off by default. `./init.sh --packages` (or
+`make install-packages`) first installs the dev toolchain listed in
+`packages.txt` with `pacman -S --needed`. It assumes the CachyOS repos (for
+`claude-code`); AUR packages are not included.
+
 If it warns about a locale that isn't generated, run the `sudo` command it
 prints - otherwise apps launched from Plasma (e.g. rofi) fail to start.
 

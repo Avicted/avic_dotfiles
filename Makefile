@@ -38,6 +38,10 @@ TO_REF   ?= HEAD
 install: ## Symlink the dotfiles into $HOME (./init.sh)
 	@"$(ROOT_DIR)/init.sh"
 
+.PHONY: install-packages
+install-packages: ## Install the dev packages in packages.txt, then symlink (./init.sh --packages)
+	@"$(ROOT_DIR)/init.sh" --packages
+
 .PHONY: hooks
 hooks: image ## Install git hooks that run pre-commit in Docker on commit and push
 	@for stage in pre-commit pre-push; do \

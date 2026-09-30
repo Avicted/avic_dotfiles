@@ -15,6 +15,8 @@
 #   * KDE rc files are machine-written state, so only individual keys are set
 #     (Meta+Space -> rofi, conky excluded from session restore). Locales used by
 #     Plasma are only checked - generating them needs root, so it's left to you.
+#   * Packages are opt-in: `./init.sh --packages` (or INSTALL_PACKAGES=1) first
+#     installs the dev toolchain listed in packages.txt with pacman.
 #
 # Idempotent: safe to re-run. Any existing live file/dir is backed up (with a
 # .bak.<timestamp> suffix) before being replaced by a symlink.
@@ -23,9 +25,17 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOME_DIR="${HOME}"
 BAK_SUFFIX=".bak.$(date +%Y%m%d-%H%M%S)"
+INSTALL_PACKAGES="${INSTALL_PACKAGES:-0}"
 
 log()  { printf '\033[1;34m[init]\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m[init][warn]\033[0m %s\n' "$*" >&2; }
+
+for arg in "$@"; do
+  case "$arg" in
+    --packages) INSTALL_PACKAGES=1 ;;
+    *) printf 'usage: %s [--packages]\n' "$0" >&2; exit 1 ;;
+  esac
+done
 
 # link_item <live-path> <repo-target>
 # Make live-path a symlink to repo-target. Backs up any pre-existing real
@@ -131,9 +141,37 @@ setup_kde() {
   done < <(sed -n 's/^\(LANG\|LC_[A-Z]*\)=//p' "$HOME_DIR/.config/plasma-localerc" 2>/dev/null | sort -u)
 }
 
+# Dev toolchain from packages.txt. Docker's service and group need root and a
+# re-login, so those are only printed as hints.
+install_packages() {
+  if ! command -v pacman >/dev/null; then
+    warn "pacman not found - skipping packages"
+    return
+  fi
+
+  local pkgs
+  read -ra pkgs < <(sed 's/#.*//' "$REPO_DIR/packages.txt" | xargs)
+  sudo pacman -S --needed "${pkgs[@]}"
+  log "ok      packages from packages.txt"
+
+  if ! systemctl is-enabled --quiet docker.service 2>/dev/null; then
+    warn "docker is not enabled. Fix with: sudo systemctl enable --now docker.service"
+  fi
+  if ! id -nG | grep -qw docker; then
+    warn "you are not in the docker group. Fix with: sudo usermod -aG docker $USER (then log in again)"
+  fi
+}
+
 log "repo: $REPO_DIR"
 log "home: $HOME_DIR"
 echo
+
+# --- Packages (opt-in) -------------------------------------------------------
+if [ "$INSTALL_PACKAGES" = 1 ]; then
+  install_packages
+else
+  log "skip    packages (run with --packages to install)"
+fi
 
 # --- Authored config (whole dir/file symlinks) -------------------------------
 link_authored ".zshrc"
