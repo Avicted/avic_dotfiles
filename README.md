@@ -29,6 +29,20 @@ git add -p && git commit -m "update configs" && git push   # after editing a liv
 To add a new config: copy it into the repo at its `~`-relative path, add it to
 `link_authored` in `init.sh`, remove the original, and re-run `./init.sh`.
 
+## Development
+
+Everything goes through `make`. Run it without arguments to get the menu.
+The quality gate is pre-commit running in Docker (`Dockerfile.pre-commit`), so
+Docker is the only thing it needs. It covers file hygiene, shellcheck, a `zsh -n`
+syntax check of `.zshrc`, hadolint and gitleaks.
+
+```bash
+make hooks              # run the gate on every commit (and a history secret scan on push)
+make pre-commit-pr-run  # the gate on origin/master..HEAD - what CI runs on a PR
+make pre-commit-run     # every hook on every file
+make secrets            # gitleaks over the working tree and the full git history
+```
+
 ## Git configuration
 
 `.gitconfig` in this repo has no identity or machine-specific paths.

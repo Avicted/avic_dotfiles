@@ -1,0 +1,45 @@
+# syntax=docker/dockerfile:1
+
+# Image that runs the pre-commit hooks, with every linter present as a system
+# binary at an exact pinned version - a linter that changes its verdict between
+# rebuilds without the code changing is worse than no linter. Docker is then the
+# only thing a machine needs to run the full gate.
+#
+# Build:  make image
+# Run:    make pre-commit-run, make pre-commit-pr-run
+#
+# shellcheck, gitleaks and hadolint are static binaries lifted from their
+# official images rather than taken from apk, whose versions drift.
+
+FROM koalaman/shellcheck:v0.10.0 AS shellcheck
+FROM zricethezav/gitleaks:v8.24.0 AS gitleaks
+FROM hadolint/hadolint:v2.12.0-alpine AS hadolint
+
+FROM alpine:3.22
+
+ARG PRE_COMMIT_VERSION=4.3.0
+
+# python3 and git for pre-commit itself, make for the Makefile hook, zsh for
+# the .zshrc syntax check (shellcheck cannot parse zsh).
+# hadolint ignore=DL3018
+RUN <<EOF
+    set -eu
+    apk add --no-cache bash git make python3 py3-pip zsh
+    pip install --no-cache-dir --break-system-packages "pre-commit==${PRE_COMMIT_VERSION}"
+    # The container runs as the host user, whose UID owns the mounted repo but
+    # not this image - so the safe.directory exemption must be system-wide.
+    git config --system --add safe.directory '*'
+EOF
+
+COPY --from=shellcheck /bin/shellcheck /usr/local/bin/shellcheck
+COPY --from=gitleaks /usr/bin/gitleaks /usr/local/bin/gitleaks
+COPY --from=hadolint /bin/hadolint /usr/local/bin/hadolint
+
+# Hook environments are cached on a host bind mount, so they survive between
+# runs and stay owned by the host user.
+ENV PRE_COMMIT_HOME=/cache
+
+WORKDIR /repo
+
+ENTRYPOINT ["pre-commit"]
+CMD ["run", "--all-files"]

@@ -1,0 +1,88 @@
+# Pre-commit quality + security gate for the dotfiles.
+#   https://pre-commit.com
+#
+#   make pre-commit-pr-run   hooks on origin/master..HEAD, in Docker (what CI runs)
+#   make pre-commit-run      every hook on every file, in Docker
+#   make hooks               run the hooks on each commit/push, in Docker
+#   make secrets             gitleaks over the working tree and the full history
+#
+# The local hooks call binaries baked into Dockerfile.pre-commit, so they are
+# meant to run in that image rather than on the host.
+
+repos:
+  # ---- Generic hygiene -------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-added-large-files
+      - id: detect-private-key
+
+  # ---- Linters and secret scanning, from the image ---------------------------
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck -x
+        language: system
+        types: [shell]
+        exclude_types: [zsh]
+
+      # shellcheck cannot parse zsh, so .zshrc gets a syntax check only.
+      - id: zsh-syntax
+        name: zsh -n (syntax)
+        entry: zsh -n
+        language: system
+        files: ^\.zshrc$
+
+      - id: hadolint
+        name: hadolint
+        entry: hadolint
+        language: system
+        files: (^|/)Dockerfile(\.[a-z-]+)?$
+
+      - id: makefile
+        name: Makefile parses
+        entry: make -n help
+        language: system
+        files: ^Makefile$
+        pass_filenames: false
+
+      # What is about to be committed. On a commit that is the staged diff; on
+      # `make pre-commit-run` (--all-files) there is nothing staged, so the tree scan
+      # below is what covers it.
+      - id: gitleaks-staged
+        name: gitleaks (staged changes)
+        entry: gitleaks git --pre-commit --staged --redact --no-banner
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: gitleaks-tree
+        name: gitleaks (working tree)
+        entry: gitleaks dir --redact --no-banner
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [manual]
+
+      # This repo is public: a secret that ever landed in history is leaked,
+      # even if a later commit removed it. Checked before it leaves the machine.
+      - id: gitleaks-history
+        name: gitleaks (full git history)
+        entry: gitleaks git --redact --no-banner
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push, manual]
