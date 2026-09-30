@@ -12,6 +12,9 @@
 #   * ~/.gitconfig is NOT symlinked - it's a real file that [include]s the shared
 #     config, so `git config --global` writes locally, never into the public repo.
 #   * .config/discord is app state, not config - it is deliberately not linked.
+#   * KDE rc files are machine-written state, so only individual keys are set
+#     (Meta+Space -> rofi, conky excluded from session restore). Locales used by
+#     Plasma are only checked - generating them needs root, so it's left to you.
 #
 # Idempotent: safe to re-run. Any existing live file/dir is backed up (with a
 # .bak.<timestamp> suffix) before being replaced by a symlink.
@@ -93,6 +96,41 @@ setup_gitconfig() {
   log "linked  ~/.gitconfig includes $target"
 }
 
+# KDE Plasma: global shortcut, session restore, conky autostart, locale check.
+setup_kde() {
+  if ! command -v kwriteconfig6 >/dev/null; then
+    warn "kwriteconfig6 not found - skipping KDE setup"
+    return
+  fi
+
+  # Meta+Space launches rofi (.local/share/applications/rofi-drun.desktop).
+  # Also register it with a running kglobalaccel, which otherwise keeps its own
+  # in-memory copy and ignores the file until next login.
+  kwriteconfig6 --file kglobalshortcutsrc --group services --group rofi-drun.desktop \
+    --key _launch "Meta+Space"
+  local action="['rofi-drun.desktop', '_launch', 'Rofi App Launcher', 'Rofi App Launcher']"
+  local kga=(gdbus call --session -d org.kde.kglobalaccel -o /kglobalaccel)
+  if "${kga[@]}" -m org.kde.KGlobalAccel.doRegister "$action" >/dev/null 2>&1; then
+    "${kga[@]}" -m org.kde.KGlobalAccel.setForeignShortcut "$action" "[268435488]" >/dev/null # Meta+Space
+  fi
+  log "ok      Meta+Space -> rofi"
+
+  # Session restore relaunches conky on top of the autostart copy - exclude it.
+  kwriteconfig6 --file ksmserverrc --group General --key excludeApps conky
+  log "ok      conky excluded from session restore"
+  link_item "$HOME_DIR/.config/autostart/conky.desktop" /usr/share/applications/conky.desktop
+
+  # Plasma exports its Region & Language locales to every app; one that isn't
+  # generated makes apps like rofi fail with "Failed to set locale".
+  local loc
+  for loc in $(sed -n 's/^\(LANG\|LC_[A-Z]*\)=//p' "$HOME_DIR/.config/plasma-localerc" 2>/dev/null | sort -u); do
+    if ! locale -a | grep -qxF "${loc/.UTF-8/.utf8}"; then
+      warn "locale $loc is used by Plasma but not generated. Fix with:"
+      warn "  sudo sed -i 's/^#\\s*$loc UTF-8/$loc UTF-8/' /etc/locale.gen && sudo locale-gen"
+    fi
+  done
+}
+
 log "repo: $REPO_DIR"
 log "home: $HOME_DIR"
 echo
@@ -107,10 +145,12 @@ link_authored ".config/gamemode"
 link_authored ".config/git"
 link_authored ".config/nvim"
 link_authored ".config/rofi"
+link_authored ".local/share/applications/rofi-drun.desktop"
 
 # --- Special cases -----------------------------------------------------------
 setup_claude
 setup_gitconfig
+setup_kde
 
 echo
 log "done. To make edits stick: edit the live file, then"

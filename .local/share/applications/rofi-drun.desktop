@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Rofi App Launcher
+Exec=rofi -show drun
+Icon=rofi
+NoDisplay=true
+X-KDE-Shortcuts=Meta+Space
