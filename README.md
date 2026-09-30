@@ -15,7 +15,10 @@ cd ~/projects/avic_dotfiles
 
 `init.sh` is idempotent; any pre-existing live file/dir is backed up to
 `*.bak.<timestamp>` before being replaced. See its comments for the special
-cases (`~/.claude`, `~/.gitconfig`, `.config/discord`).
+cases (`~/.claude`, `~/.gitconfig`, `.config/discord`, KDE).
+
+If it warns about a locale that isn't generated, run the `sudo` command it
+prints - otherwise apps launched from Plasma (e.g. rofi) fail to start.
 
 ## Usage
 
