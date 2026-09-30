@@ -123,12 +123,12 @@ setup_kde() {
   # Plasma exports its Region & Language locales to every app; one that isn't
   # generated makes apps like rofi fail with "Failed to set locale".
   local loc
-  for loc in $(sed -n 's/^\(LANG\|LC_[A-Z]*\)=//p' "$HOME_DIR/.config/plasma-localerc" 2>/dev/null | sort -u); do
+  while read -r loc; do
     if ! locale -a | grep -qxF "${loc/.UTF-8/.utf8}"; then
       warn "locale $loc is used by Plasma but not generated. Fix with:"
       warn "  sudo sed -i 's/^#\\s*$loc UTF-8/$loc UTF-8/' /etc/locale.gen && sudo locale-gen"
     fi
-  done
+  done < <(sed -n 's/^\(LANG\|LC_[A-Z]*\)=//p' "$HOME_DIR/.config/plasma-localerc" 2>/dev/null | sort -u)
 }
 
 log "repo: $REPO_DIR"

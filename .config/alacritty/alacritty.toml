@@ -26,7 +26,7 @@ draw_bold_text_with_bright_colors = true
 
 # Default colors
 [colors.primary]
-# hard contrast 
+# hard contrast
 # background = '#1d2021'
 background = '#031c1f'
 # background = '#282828'

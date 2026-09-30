@@ -22,9 +22,9 @@ fi
 
 # Apply settings based on state
 if [ "$STATE" == "on" ]; then
-    vibrant-cli DisplayPort-0 1.7
+    vibrant-cli "$DISPLAY_NAME" 1.7
     echo "Vibrancy turned on."
 elif [ "$STATE" == "off" ]; then
-    vibrant-cli DisplayPort-0 1.0
+    vibrant-cli "$DISPLAY_NAME" 1.0
     echo "Vibrancy turned off."
 fi

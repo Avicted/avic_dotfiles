@@ -9,7 +9,7 @@ home="$HOME"
 # Abbreviate home directory as ~
 case "$cwd" in
   "$home"*)
-    cwd="~${cwd#$home}"
+    cwd="~${cwd#"$home"}"
     ;;
 esac
 
@@ -18,9 +18,6 @@ model=$(echo "$input" | jq -r '.model.display_name // empty')
 user=$(whoami)
 host=$(hostname -s)
 used=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
-
-# Build the output
-output=""
 
 # dir segment (cyan-ish)
 printf '\033[0;36m%s\033[0m' "$cwd"

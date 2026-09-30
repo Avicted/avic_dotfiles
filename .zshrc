@@ -50,4 +50,3 @@ lsgit() {
     printf "%-30s Last commit: %s\n" "$d" "$commit_info"
   done
 }
-
