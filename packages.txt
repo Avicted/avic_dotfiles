@@ -37,6 +37,7 @@ neovim
 vim
 tmux
 ripgrep
+atuin
 wget
 rsync
 unzip

@@ -13,6 +13,22 @@ source /usr/share/cachyos-zsh-config/cachyos-config.zsh
 unsetopt correct
 unsetopt correct_all
 
+# History: keep everything on disk too (atuin has its own db; zsh's feeds up-arrow)
+HISTSIZE=100000
+SAVEHIST=100000
+setopt hist_ignore_all_dups hist_reduce_blanks
+
+# Up/Down: substring search over history (plugin is sourced by cachyos-config)
+bindkey '^[[A' history-substring-search-up
+bindkey '^[OA' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey '^[OB' history-substring-search-down
+
+# Ctrl-R: atuin (up-arrow left to substring search above)
+if command -v atuin >/dev/null; then
+  eval "$(atuin init zsh --disable-up-arrow)"
+fi
+
 # typo fixes
 unalias gf
 

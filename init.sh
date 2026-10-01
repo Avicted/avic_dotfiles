@@ -15,6 +15,8 @@
 #   * KDE rc files are machine-written state, so only individual keys are set
 #     (Meta+Space -> rofi, conky excluded from session restore). Locales used by
 #     Plasma are only checked - generating them needs root, so it's left to you.
+#   * Atuin's history db is seeded once from ~/.zsh_history (skipped if the db
+#     already exists, so re-runs never import duplicates).
 #   * Packages are opt-in: `./init.sh --packages` (or INSTALL_PACKAGES=1) first
 #     installs the dev toolchain listed in packages.txt with pacman.
 #
@@ -141,6 +143,20 @@ setup_kde() {
   done < <(sed -n 's/^\(LANG\|LC_[A-Z]*\)=//p' "$HOME_DIR/.config/plasma-localerc" 2>/dev/null | sort -u)
 }
 
+# Atuin: seed its db from zsh history the first time only.
+setup_atuin() {
+  if ! command -v atuin >/dev/null; then
+    warn "atuin not found - skipping history import (install it with --packages)"
+    return
+  fi
+  if [ -e "$HOME_DIR/.local/share/atuin/history.db" ]; then
+    log "ok      atuin history db already exists"
+    return
+  fi
+  atuin import zsh
+  log "ok      imported ~/.zsh_history into atuin"
+}
+
 # Dev toolchain from packages.txt. Docker's service and group need root and a
 # re-login, so those are only printed as hints.
 install_packages() {
@@ -177,6 +193,7 @@ fi
 link_authored ".zshrc"
 link_authored ".config/MangoHud"
 link_authored ".config/alacritty"
+link_authored ".config/atuin"
 link_authored ".config/automation"
 link_authored ".config/conky"
 link_authored ".config/gamemode"
@@ -188,6 +205,7 @@ link_authored ".local/share/applications/rofi-drun.desktop"
 # --- Special cases -----------------------------------------------------------
 setup_claude
 setup_gitconfig
+setup_atuin
 setup_kde
 
 echo

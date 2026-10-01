@@ -1,0 +1,18 @@
+# Atuin - shell history search on Ctrl-R. Only non-default settings live here;
+# see https://docs.atuin.sh/configuration/config/ for the rest.
+
+# Fuzzy match across all history; press Ctrl-R inside the UI to cycle
+# global / host / session / directory filters.
+search_mode = "fuzzy"
+filter_mode = "global"
+
+style = "compact"
+inline_height = 20
+show_preview = true
+
+# Enter puts the command on the prompt for editing instead of running it.
+enter_accept = false
+
+# Local only: no update checks, no sync server.
+update_check = false
+auto_sync = false
