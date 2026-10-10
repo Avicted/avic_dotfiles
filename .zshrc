@@ -29,6 +29,8 @@ if command -v atuin >/dev/null; then
   eval "$(atuin init zsh --disable-up-arrow)"
 fi
 
+export SSH_AUTH_SOCK=${XDG_RUNTIME_DIR}/ssh-agent.socket
+
 # typo fixes
 unalias gf
 
