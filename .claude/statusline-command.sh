@@ -44,4 +44,11 @@ if [ -n "$used" ]; then
   printf ' \033[0;37m[ctx: %s%%]\033[0m' "$used_int"
 fi
 
+# plan usage limits (5-hour session, 7-day week); absent for non-subscribers
+# Rounded in jq: printf's %f follows the locale and rejects "23.4" where decimals use a comma.
+five=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty | round')
+week=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty | round')
+[ -n "$five" ] && printf ' \033[0;37m[5h: %s%%]\033[0m' "$five"
+[ -n "$week" ] && printf ' \033[0;37m[7d: %s%%]\033[0m' "$week"
+
 printf '\n'
