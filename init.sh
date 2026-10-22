@@ -15,7 +15,8 @@
 #   * KDE rc files are machine-written state, so only individual keys are set
 #     (Meta+Space -> rofi, conky excluded from session restore, the MacDark look:
 #     colors, decoration, Plasma style, WhiteSur icons/cursors). The panel comes from
-#     plasma-panels.js, applied only when that layout is missing. Locales used by
+#     plasma-panels.js, applied only when that layout is missing; per-monitor
+#     display scale is set too. Locales used by
 #     Plasma are only checked - generating them needs root, so it's left to you.
 #   * Atuin's history db is seeded once from ~/.zsh_history (skipped if the db
 #     already exists, so re-runs never import duplicates).
@@ -187,6 +188,18 @@ setup_kde() {
   for app in dolphin gwenview; do
     kwriteconfig6 --file "${app}rc" --group MainWindow --key MenuBar Enabled
   done
+
+  # Display scale per monitor connector (4K ASUS on DP-3, Dell on HDMI-A-2);
+  # monitors that aren't connected are skipped. X11 apps scale themselves.
+  local output scale
+  for output in DP-3=1.25 HDMI-A-2=1; do
+    scale="${output#*=}" output="${output%=*}"
+    if kscreen-doctor -j 2>/dev/null | grep -q "\"name\": \"$output\""; then
+      kscreen-doctor "output.$output.scale.$scale" >/dev/null
+      log "ok      $output scale $scale"
+    fi
+  done
+  kwriteconfig6 --file kwinrc --group Xwayland --key Scale 1.25
 
   # One bottom bar with open windows; the script leaves it alone if present.
   local panels
