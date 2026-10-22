@@ -5,4 +5,4 @@ configuration {
 	window-format:              "{w} · {c} · {t}";
 }
 
- @theme "gruvbox-dark-soft"
+ @theme "gruvbox-dark-hard"

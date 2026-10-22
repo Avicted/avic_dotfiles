@@ -42,6 +42,11 @@ wget
 rsync
 unzip
 
+# Desktop (KDE look: terminal + blur helper, launcher)
+alacritty
+xorg-xprop
+rofi
+
 # Containers (the Makefile's quality gate needs docker)
 docker
 docker-compose

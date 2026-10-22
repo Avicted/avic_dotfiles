@@ -21,7 +21,10 @@ Yes, this is reinventing Ansible, one pacman -S at a time.
 
 `init.sh` is idempotent: an existing file in `~` is backed up to
 `*.bak.<timestamp>` before it's replaced by a symlink. Its header comment covers
-the special cases (`~/.claude`, `~/.gitconfig`, `.config/discord`, KDE). If it
+the special cases (`~/.claude`, `~/.gitconfig`, `.config/discord`, KDE). For
+KDE it also applies the whole MacDark look (colors, title bar, Plasma style,
+WhiteSur icons/cursors fetched at pinned commits) and, if missing, the panel
+layout from `plasma-panels.js`. If it
 warns about a missing locale, run the `sudo` command it prints, or apps
 launched from Plasma (like rofi) won't start.
 

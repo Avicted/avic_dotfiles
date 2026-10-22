@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Alacritty on XWayland with KWin blur. Alacritty 0.17 never sets the X11 blur
+# hint and KWin 6.8 dropped the Wayland one it would use, so set the hint here.
+set -euo pipefail
+
+unset WAYLAND_DISPLAY
+alacritty "$@" &
+pid=$!
+
+# Window shows up a moment after launch; match it by PID. Blur is cosmetic, so
+# give up quietly after ~5s.
+for _ in $(seq 50); do
+  for id in $(xprop -root _NET_CLIENT_LIST | grep -o '0x[0-9a-f]*'); do
+    if [ "$(xprop -id "$id" _NET_WM_PID | grep -o '[0-9]*$')" = "$pid" ]; then
+      xprop -id "$id" -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0
+      wait "$pid"
+      exit
+    fi
+  done
+  sleep 0.1
+done
+wait "$pid"
