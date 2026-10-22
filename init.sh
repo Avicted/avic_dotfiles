@@ -13,8 +13,9 @@
 #     config, so `git config --global` writes locally, never into the public repo.
 #   * .config/discord is app state, not config - it is deliberately not linked.
 #   * KDE rc files are machine-written state, so only individual keys are set
-#     (Meta+Space -> rofi, conky excluded from session restore, Naysayer Gruvbox
-#     color scheme + Breeze decoration applied). Locales used by
+#     (Meta+Space -> rofi, conky excluded from session restore, the MacDark look:
+#     colors, decoration, Plasma style, WhiteSur icons/cursors). The panel comes from
+#     plasma-panels.js, applied only when that layout is missing. Locales used by
 #     Plasma are only checked - generating them needs root, so it's left to you.
 #   * Atuin's history db is seeded once from ~/.zsh_history (skipped if the db
 #     already exists, so re-runs never import duplicates).
@@ -109,6 +110,37 @@ setup_gitconfig() {
   log "linked  ~/.gitconfig includes $target"
 }
 
+# WhiteSur icons + cursors from pinned upstream commits, each only when missing.
+install_whitesur() {
+  local icons="$HOME_DIR/.local/share/icons" src
+  src="$(mktemp -d)"
+  if [ -d "$icons/WhiteSur-dark" ]; then
+    log "ok      WhiteSur icons already installed"
+  else
+    fetch_pinned "https://github.com/vinceliuice/WhiteSur-icon-theme" \
+      73d8040da51a9ed74e47c7366e7e9ff437601a5c "$src/icons"
+    "$src/icons/install.sh" >/dev/null
+    log "ok      installed WhiteSur icons"
+  fi
+  if [ -d "$icons/WhiteSur-cursors" ] || [ -d "$HOME_DIR/.icons/WhiteSur-cursors" ]; then
+    log "ok      WhiteSur cursors already installed"
+  else
+    fetch_pinned "https://github.com/vinceliuice/WhiteSur-cursors" \
+      e190baf618ed95ee217d2fd45589bd309b37672b "$src/cursors"
+    mkdir -p "$icons"
+    cp -r "$src/cursors/dist" "$icons/WhiteSur-cursors"
+    log "ok      installed WhiteSur cursors"
+  fi
+  rm -rf "$src"
+}
+
+# fetch_pinned <git-url> <commit> <dir>: shallow-fetch exactly one commit.
+fetch_pinned() {
+  git init -q "$3"
+  git -C "$3" fetch -q --depth 1 "$1" "$2"
+  git -C "$3" checkout -q FETCH_HEAD
+}
+
 # KDE Plasma: global shortcut, session restore, conky autostart, locale check.
 setup_kde() {
   if ! command -v kwriteconfig6 >/dev/null; then
@@ -133,13 +165,38 @@ setup_kde() {
   log "ok      conky excluded from session restore"
   link_item "$HOME_DIR/.config/autostart/conky.desktop" /usr/share/applications/conky.desktop
 
-  # Naysayer teal + Gruvbox colors; Breeze decoration/style follow the scheme.
-  plasma-apply-colorscheme NaysayerGruvbox >/dev/null
-  kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key library org.kde.breeze
-  kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key theme Breeze
-  plasma-apply-desktoptheme breeze-dark >/dev/null
+  # Mac look. The MacDark decoration and Plasma style are WhiteSur derivatives
+  # kept in this repo; WhiteSur icons/cursors are fetched by install_whitesur.
+  plasma-apply-colorscheme MacDark >/dev/null
+  # Breeze widgets follow the color scheme (Kvantum would ignore it).
+  kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle Breeze
+  kwriteconfig6 --file kdeglobals --group KDE --key AnimationDurationFactor 0.25
+  dbus-send --session --type=signal /KGlobalSettings org.kde.KGlobalSettings.notifyChange int32:2 int32:0
+  kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key library org.kde.kwin.aurorae.v2
+  kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key theme __aurorae__svg__MacDark
+  kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled true
+  kwriteconfig6 --file kwinrc --group Effect-blur --key BlurStrength 8
+  kwriteconfig6 --file kwinrc --group Effect-blur --key NoiseStrength 6
+  plasma-apply-desktoptheme MacDark >/dev/null
+  /usr/lib/plasma-changeicons WhiteSur-dark >/dev/null 2>&1 || warn "could not apply WhiteSur-dark icons"
+  plasma-apply-cursortheme WhiteSur-cursors --size 24 >/dev/null || warn "could not apply WhiteSur cursors"
+  log "ok      MacDark colors/decoration/style + WhiteSur icons/cursors"
+
+  # Menus live in the app windows (no global menu); these apps hide them by default.
+  local app
+  for app in dolphin gwenview; do
+    kwriteconfig6 --file "${app}rc" --group MainWindow --key MenuBar Enabled
+  done
+
+  # One bottom bar with open windows; the script leaves it alone if present.
+  local panels
+  if panels="$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+    "$(cat "$REPO_DIR/plasma-panels.js")" 2>/dev/null)"; then
+    log "ok      panels ($panels)"
+  else
+    warn "plasmashell not running - panels not set up (re-run inside Plasma)"
+  fi
   qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
-  log "ok      Naysayer Gruvbox colors + Breeze decoration"
 
   # Plasma exports its Region & Language locales to every app; one that isn't
   # generated makes apps like rofi fail with "Failed to set locale".
@@ -212,12 +269,15 @@ link_authored ".config/rofi"
 link_authored ".local/share/applications/rofi-drun.desktop"
 link_authored ".local/share/applications/Alacritty.desktop"
 link_authored ".local/bin/alacritty-blur"
-link_authored ".local/share/color-schemes/NaysayerGruvbox.colors"
+link_authored ".local/share/color-schemes/MacDark.colors"
+link_authored ".local/share/aurorae/themes/MacDark"
+link_authored ".local/share/plasma/desktoptheme/MacDark"
 
 # --- Special cases -----------------------------------------------------------
 setup_claude
 setup_gitconfig
 setup_atuin
+install_whitesur
 setup_kde
 
 echo
