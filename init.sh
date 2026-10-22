@@ -13,7 +13,8 @@
 #     config, so `git config --global` writes locally, never into the public repo.
 #   * .config/discord is app state, not config - it is deliberately not linked.
 #   * KDE rc files are machine-written state, so only individual keys are set
-#     (Meta+Space -> rofi, conky excluded from session restore). Locales used by
+#     (Meta+Space -> rofi, conky excluded from session restore, Naysayer Gruvbox
+#     color scheme + Breeze decoration applied). Locales used by
 #     Plasma are only checked - generating them needs root, so it's left to you.
 #   * Atuin's history db is seeded once from ~/.zsh_history (skipped if the db
 #     already exists, so re-runs never import duplicates).
@@ -132,6 +133,14 @@ setup_kde() {
   log "ok      conky excluded from session restore"
   link_item "$HOME_DIR/.config/autostart/conky.desktop" /usr/share/applications/conky.desktop
 
+  # Naysayer teal + Gruvbox colors; Breeze decoration/style follow the scheme.
+  plasma-apply-colorscheme NaysayerGruvbox >/dev/null
+  kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key library org.kde.breeze
+  kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key theme Breeze
+  plasma-apply-desktoptheme breeze-dark >/dev/null
+  qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
+  log "ok      Naysayer Gruvbox colors + Breeze decoration"
+
   # Plasma exports its Region & Language locales to every app; one that isn't
   # generated makes apps like rofi fail with "Failed to set locale".
   local loc
@@ -201,6 +210,9 @@ link_authored ".config/git"
 link_authored ".config/nvim"
 link_authored ".config/rofi"
 link_authored ".local/share/applications/rofi-drun.desktop"
+link_authored ".local/share/applications/Alacritty.desktop"
+link_authored ".local/bin/alacritty-blur"
+link_authored ".local/share/color-schemes/NaysayerGruvbox.colors"
 
 # --- Special cases -----------------------------------------------------------
 setup_claude
