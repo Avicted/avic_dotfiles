@@ -1,5 +1,5 @@
 # Pre-commit quality + security gate for the dotfiles.
-#   https://pre-commit.com
+#   https://prek.j178.dev (runs this standard pre-commit config)
 #
 #   make pre-commit-pr-run   hooks on origin/master..HEAD, in Docker (what CI runs)
 #   make pre-commit-run      every hook on every file, in Docker

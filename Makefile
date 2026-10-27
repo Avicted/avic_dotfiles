@@ -1,6 +1,6 @@
 # Avic's dotfiles - single entry point. Run `make` for the menu.
 #
-# Every quality check runs pre-commit inside Dockerfile.pre-commit, so Docker
+# Every quality check runs prek (a Rust drop-in for pre-commit) inside Dockerfile.pre-commit, so Docker
 # is the only tool a machine needs. The container runs as the calling user, so
 # hooks that fix files in place never leave them owned by root.
 
@@ -43,9 +43,9 @@ install-packages: ## Install the dev packages in packages.txt, then symlink (./i
 	@"$(ROOT_DIR)/init.sh" --packages
 
 .PHONY: hooks
-hooks: image ## Install git hooks that run pre-commit in Docker on commit and push
+hooks: image ## Install git hooks that run prek in Docker on commit and push
 	@for stage in pre-commit pre-push; do \
-	  printf '#!/bin/sh\n# Installed by `make hooks` - runs pre-commit in Docker.\nexec make -C "%s" --no-print-directory lint-staged STAGE=%s\n' \
+	  printf '#!/bin/sh\n# Installed by `make hooks` - runs prek in Docker.\nexec make -C "%s" --no-print-directory lint-staged STAGE=%s\n' \
 	    "$(ROOT_DIR)" "$$stage" > "$(HOOKS_DIR)/$$stage"; \
 	  chmod +x "$(HOOKS_DIR)/$$stage"; \
 	done
@@ -91,11 +91,11 @@ autoupdate: image ## Bump the hook revisions in .pre-commit-config.yaml
 
 ##@ Docker
 .PHONY: image
-image: ## Build the pre-commit image (cached, fast when unchanged)
+image: ## Build the prek image (cached, fast when unchanged)
 	@docker build -q -t $(IMAGE) - < "$(ROOT_DIR)/Dockerfile.pre-commit" >/dev/null
 
 .PHONY: shell
-shell: image ## Open a shell in the pre-commit image
+shell: image ## Open a shell in the prek image
 	@docker run --rm -it --user "$$(id -u):$$(id -g)" -e HOME=/tmp -v "$(ROOT_DIR)":/repo \
 	  -v "$(CACHE_DIR)":/cache --entrypoint bash $(IMAGE)
 
