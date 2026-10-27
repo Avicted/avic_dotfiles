@@ -1,7 +1,6 @@
 {
   "cleanupPeriodDays": 99999,
   "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0"
   },
@@ -22,8 +21,9 @@
       "Bash(git branch -d*)",
       "Bash(rm -*)"
     ],
-    "blockReadsOutsideWorkingDirectories": true
+    "blockReadsOutsideWorkingDirectories": false
   },
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": []
   },
@@ -33,30 +33,17 @@
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
-    "token-optimizer@alexgreensh-token-optimizer": false,
-    "mattpocock-skills@mattpocock": false
+    "mattpocock-skills@mattpocock": false,
+    "gopls-lsp@claude-plugins-official": true
   },
-  "extraKnownMarketplaces": {
-    "alexgreensh-token-optimizer": {
-      "source": {
-        "source": "github",
-        "repo": "alexgreensh/token-optimizer"
-      }
-    },
-    "mattpocock": {
-      "source": {
-        "source": "github",
-        "repo": "mattpocock/skills"
-      }
-    }
-  },
+  "extraKnownMarketplaces": {},
   "effortLevel": "medium",
-  "tui": "fullscreen",
-  "theme": "dark",
-  "switchModelsOnFlag": false,
   "modelSettings": {
     "claude-opus-5-5": {
       "effortLevel": "medium"
     }
-  }
+  },
+  "tui": "fullscreen",
+  "theme": "dark",
+  "switchModelsOnFlag": false
 }
