@@ -23,7 +23,7 @@
     ],
     "blockReadsOutsideWorkingDirectories": false
   },
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
     "PreToolUse": []
   },
@@ -34,7 +34,8 @@
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
     "mattpocock-skills@mattpocock": false,
-    "gopls-lsp@claude-plugins-official": true
+    "gopls-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {},
   "effortLevel": "medium",
