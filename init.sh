@@ -22,6 +22,10 @@
 #     already exists, so re-runs never import duplicates).
 #   * Packages are opt-in: `./init.sh --packages` (or INSTALL_PACKAGES=1) first
 #     installs the dev toolchain listed in packages.txt with pacman.
+#   * Push-to-talk is opt-in: `./init.sh --ptt` (or SETUP_PTT=1) runs the
+#     ptt-gate repo's own scripts/setup.sh (keyd config, input group, daemon and
+#     its user unit). Its files are not tracked here: its `make install` rewrites
+#     the unit, which would replace a symlink with a plain copy.
 #
 # Idempotent: safe to re-run. Any existing live file/dir is backed up (with a
 # .bak.<timestamp> suffix) before being replaced by a symlink.
@@ -31,6 +35,8 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOME_DIR="${HOME}"
 BAK_SUFFIX=".bak.$(date +%Y%m%d-%H%M%S)"
 INSTALL_PACKAGES="${INSTALL_PACKAGES:-0}"
+SETUP_PTT="${SETUP_PTT:-0}"
+PTT_GATE_DIR="${PTT_GATE_DIR:-$HOME/projects/probe/ptt-gate}"
 
 log()  { printf '\033[1;34m[init]\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m[init][warn]\033[0m %s\n' "$*" >&2; }
@@ -38,7 +44,8 @@ warn() { printf '\033[1;33m[init][warn]\033[0m %s\n' "$*" >&2; }
 for arg in "$@"; do
   case "$arg" in
     --packages) INSTALL_PACKAGES=1 ;;
-    *) printf 'usage: %s [--packages]\n' "$0" >&2; exit 1 ;;
+    --ptt) SETUP_PTT=1 ;;
+    *) printf 'usage: %s [--packages] [--ptt]\n' "$0" >&2; exit 1 ;;
   esac
 done
 
@@ -257,6 +264,18 @@ install_packages() {
   fi
 }
 
+# Push-to-talk mic gate. ptt-gate's setup.sh is idempotent and does its own
+# sudo steps, so this only finds it and hands over.
+setup_ptt_gate() {
+  local setup="$PTT_GATE_DIR/scripts/setup.sh"
+  if [ ! -x "$setup" ]; then
+    warn "ptt-gate not found at $PTT_GATE_DIR - skipping push-to-talk (set PTT_GATE_DIR)"
+    return
+  fi
+  "$setup"
+  log "ok      ptt-gate (check it with: make -C $PTT_GATE_DIR doctor)"
+}
+
 log "repo: $REPO_DIR"
 log "home: $HOME_DIR"
 echo
@@ -292,6 +311,13 @@ setup_gitconfig
 setup_atuin
 install_whitesur
 setup_kde
+
+# --- Push-to-talk (opt-in) ---------------------------------------------------
+if [ "$SETUP_PTT" = 1 ]; then
+  setup_ptt_gate
+else
+  log "skip    push-to-talk (run with --ptt to set up ptt-gate)"
+fi
 
 echo
 log "done. To make edits stick: edit the live file, then"

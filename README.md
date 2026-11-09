@@ -12,6 +12,7 @@ git clone git@github.com:Avicted/avic_dotfiles.git ~/projects/avic_dotfiles
 cd ~/projects/avic_dotfiles
 ./init.sh              # symlink the configs into ~
 ./init.sh --packages   # same, but first pacman-install the dev tools in packages.txt
+./init.sh --ptt        # same, then set up push-to-talk (ptt-gate, needs sudo)
 ```
 
 Packages are off by default. The list assumes the CachyOS repos (for
@@ -27,6 +28,19 @@ WhiteSur icons/cursors fetched at pinned commits) and, if missing, the panel
 layout from `plasma-panels.js`. If it
 warns about a missing locale, run the `sudo` command it prints, or apps
 launched from Plasma (like rofi) won't start.
+
+### Push-to-talk (KDE Wayland)
+
+Discord can't see global keys under Wayland, so push-to-talk is done by
+ptt-gate (`~/projects/probe/ptt-gate`): keyd turns Caps Lock into F24 and
+a user service unmutes the mic only while it's held. `--ptt` runs that repo's
+`scripts/setup.sh`, which installs the keyd config, adds you to the `input`
+group, and installs and starts the `ptt-gate` user unit. It expects the repo at
+`~/projects/probe/ptt-gate` (override with `PTT_GATE_DIR=...`). Its config isn't
+tracked here, because ptt-gate's `make install` would overwrite the symlinks.
+
+Discord/Vesktop then needs Voice Activity with the sensitivity slider all the
+way left. `make -C ~/projects/probe/ptt-gate doctor` checks the whole setup.
 
 ## Usage
 

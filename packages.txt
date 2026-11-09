@@ -47,6 +47,10 @@ alacritty
 xorg-xprop
 rofi
 
+# Push-to-talk on Wayland (ptt-gate: keyd remaps the key, libpulse mutes the mic)
+keyd
+libpulse
+
 # Containers (the Makefile's quality gate needs docker)
 docker
 docker-compose

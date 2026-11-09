@@ -42,6 +42,10 @@ install: ## Symlink the dotfiles into $HOME (./init.sh)
 install-packages: ## Install the dev packages in packages.txt, then symlink (./init.sh --packages)
 	@"$(ROOT_DIR)/init.sh" --packages
 
+.PHONY: install-ptt
+install-ptt: ## Symlink, then set up ptt-gate push-to-talk (./init.sh --ptt)
+	@"$(ROOT_DIR)/init.sh" --ptt
+
 .PHONY: hooks
 hooks: image ## Install git hooks that run prek in Docker on commit and push
 	@for stage in pre-commit pre-push; do \
