@@ -44,6 +44,8 @@ alias docker_remove_all='docker rm -f $(docker ps -aq)'
 alias MAKE="make"
 alias gs="git status"
 
+# development specific aliases
+alias pcr="make -f Makefile.pre-commit pre-commit-pr-run"
 
 # dotnet core schenanigans
 export DOTNET_ROOT=$HOME/.dotnet
