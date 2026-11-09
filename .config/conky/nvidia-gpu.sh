@@ -29,7 +29,7 @@ if [ ! -s "$cache" ] || [ "$((now - mtime))" -ge 2 ]; then
 fi
 
 awk -F', *' -v k="$1" 'NR==1{
-    if      (k=="temp")    printf "%s", $1
+    if      (k=="temp")    printf "%.0f", $1
     else if (k=="util")    printf "%s", $2
     else if (k=="power")   printf "%.0f", $5
     else if (k=="fan")     printf "%s", $6
